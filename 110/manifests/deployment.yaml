@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app12-reader-and-writer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app12-reader-and-writer
+  template:
+    metadata:
+      labels:
+        app: app12-reader-and-writer
+    spec:
+      volumes:
+        - name: shared-logs
+          emptyDir: { }
+      containers:
+        - name: app1-writer
+          imagePullPolicy: Always
+          image: dievskiy/log-app1-writer:v1
+          volumeMounts:
+            - mountPath: /usr/src/app/files
+              name: shared-logs
+        - name: app2-reader
+          imagePullPolicy: Always
+          image: dievskiy/log-app2-reader:v1
+          volumeMounts:
+            - mountPath: /usr/src/app/files
+              name: shared-logs
