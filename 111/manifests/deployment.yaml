@@ -25,7 +25,7 @@ spec:
               name: data-pv
         - name: log-output
           imagePullPolicy: Always
-          image: dievskiy/log-output:v12
+          image: dievskiy/log-output:v13
           volumeMounts:
             - mountPath: /usr/src/app/files
               name: data-pv
