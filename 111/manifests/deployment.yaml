@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ex-11
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ex-11
+  template:
+    metadata:
+      labels:
+        app: ex-11
+    spec:
+      volumes:
+        - name: data-pv
+          persistentVolumeClaim:
+            claimName: data-claim
+      containers:
+        - name: pingpong
+          imagePullPolicy: Always
+          image: dievskiy/pingpong:v2
+          volumeMounts:
+            - mountPath: /usr/src/app/files
+              name: data-pv
+        - name: log-output
+          imagePullPolicy: Always
+          image: dievskiy/log-output:v11
+          volumeMounts:
+            - mountPath: /usr/src/app/files
+              name: data-pv
