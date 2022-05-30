@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: todoapp-v1-svc
+spec:
+  type: ClusterIP
+  selector:
+    app: ex-202
+  ports:
+    - port: 1010
+      protocol: TCP
+      targetPort: 4444

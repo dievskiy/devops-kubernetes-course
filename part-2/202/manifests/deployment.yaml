@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ex-202
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ex-202
+  template:
+    metadata:
+      labels:
+        app: ex-202
+    spec:
+      volumes:
+        - name: data-pv
+          persistentVolumeClaim:
+            claimName: data-claim
+      containers:
+        - name: pingpong
+          imagePullPolicy: Always
+          image: dievskiy/pingpong:v3
+        - name: todoapp
+          imagePullPolicy: Always
+          image: dievskiy/todoapp:v1
+        - name: log-output
+          imagePullPolicy: Always
+          image: dievskiy/log-output:v15
+          volumeMounts:
+            - mountPath: /usr/src/app/files
+              name: data-pv
