@@ -4,3 +4,5 @@
 tmp
 !.env.test
 venv
+key.txt
+secret.yaml

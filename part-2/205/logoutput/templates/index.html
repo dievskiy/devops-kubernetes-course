@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Devops</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <style type="text/css">
+        .container {
+            max-width: 500px;
+            padding-top: 100px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <p>{{ current_time }}: {{ random_string }}</p>
+    <p>Ping / Pongs: {{ pongs }}</p>
+    <img src="data:;base64,{{ image_data }}" alt="">
+    <form class="form-group" action="/submit_form">
+        <label for="item">Item: </label>
+        <input type="text" id="item" name="item" maxlength="140">
+        <input type="submit" value="Create">
+    </form>
+    <ul class="list-group">
+        <li class="list-group-item">
+            1. TODO
+        </li>
+        <li class="list-group-item">
+            2. TODO
+        </li>
+    </ul>
+</div>
+<script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+</body>
+</html>
