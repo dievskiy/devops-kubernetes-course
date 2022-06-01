@@ -1,0 +1,110 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-svc
+  namespace: my-project
+  labels:
+    app: postgresapp
+spec:
+  ports:
+    - port: 6060
+      name: web
+  clusterIP: None
+  selector:
+    app: postgresapp
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: todoapp-svc
+  namespace: my-project
+  labels:
+    app: todoapp
+spec:
+  ports:
+    - port: 4444
+      name: pingpong
+  clusterIP: None
+  selector:
+    app: todoapp
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: todoapp
+  namespace: my-project
+spec:
+  serviceName: todoapp-svc
+  replicas: 1
+  selector:
+    matchLabels:
+      app: todoapp
+  template:
+    metadata:
+      labels:
+        app: todoapp
+    spec:
+      volumes:
+        - name: secret-volume
+          secret:
+            secretName: db-secrets
+      containers:
+        - name: todo
+          imagePullPolicy: Always
+          image: dievskiy/todoapp:v4
+          envFrom:
+            - secretRef:
+                name: db-secrets
+          env:
+            - name: HOST
+              value: postgres-svc
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgresapp
+  namespace: my-project
+spec:
+  serviceName: postgres-svc
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgresapp
+  template:
+    metadata:
+      labels:
+        app: postgresapp
+    spec:
+      volumes:
+        - name: secret-volume
+          secret:
+            secretName: db-secrets
+      containers:
+        - name: postgres
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - secretRef:
+                name: db-secrets
+          env:
+            - name: POSTGRESQL_VOLUME_DIR
+              value: "/postgresql"
+            - name: PGDATA
+              value: "/postgresql/data"
+          image: postgres:14
+          ports:
+            - name: inet
+              containerPort: 6060
+          volumeMounts:
+            - name: db
+              mountPath: /postgresql
+  volumeClaimTemplates:
+    - metadata:
+        name: db
+        namespace: my-project
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        storageClassName: local-path
+        resources:
+          requests:
+            storage: 256Mi
