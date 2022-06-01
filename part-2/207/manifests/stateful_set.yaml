@@ -1,0 +1,110 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-svc
+  namespace: my-project
+  labels:
+    app: postgres
+spec:
+  ports:
+    - port: 6060
+      name: web
+  clusterIP: None
+  selector:
+    app: postgresapp
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pingpong-svc
+  namespace: my-project
+  labels:
+    app: postgres
+spec:
+  ports:
+    - port: 4040
+      name: pingpong
+  clusterIP: None
+  selector:
+    app: postgresapp
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: pingpong
+  namespace: my-project
+spec:
+  serviceName: pingpong-svc
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pingpongapp
+  template:
+    metadata:
+      labels:
+        app: pingpongapp
+    spec:
+      volumes:
+        - name: secret-volume
+          secret:
+            secretName: db-secrets
+      containers:
+        - name: pingpong
+          imagePullPolicy: Always
+          image: dievskiy/pingpong:v4
+          envFrom:
+            - secretRef:
+                name: db-secrets
+          env:
+            - name: HOST
+              value: postgres-svc
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgresapp
+  namespace: my-project
+spec:
+  serviceName: postgres-svc
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgresapp
+  template:
+    metadata:
+      labels:
+        app: postgresapp
+    spec:
+      volumes:
+        - name: secret-volume
+          secret:
+            secretName: db-secrets
+      containers:
+        - name: postgres
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - secretRef:
+                name: db-secrets
+          env:
+            - name: POSTGRESQL_VOLUME_DIR
+              value: "/postgresql"
+            - name: PGDATA
+              value: "/postgresql/data"
+          image: postgres:14
+          ports:
+            - name: inet
+              containerPort: 6060
+          volumeMounts:
+            - name: db
+              mountPath: /postgresql
+  volumeClaimTemplates:
+    - metadata:
+        name: db
+        namespace: my-project
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        storageClassName: local-path
+        resources:
+          requests:
+            storage: 256Mi
