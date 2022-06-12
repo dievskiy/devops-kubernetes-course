@@ -19,45 +19,32 @@ metadata:
   name: pingpong-svc
   namespace: my-project
   labels:
-    app: postgres
+    app: pingpong
 spec:
   ports:
-    - port: 4040
+    - port: 5555
+      protocol: TCP
       name: pingpong
   clusterIP: None
   selector:
-    app: postgresapp
+    app: pingpongapp
 ---
-apiVersion: apps/v1
-kind: StatefulSet
+apiVersion: v1
+kind: Pod
 metadata:
   name: pingpong
   namespace: my-project
 spec:
-  serviceName: pingpong-svc
-  replicas: 1
-  selector:
-    matchLabels:
-      app: pingpongapp
-  template:
-    metadata:
-      labels:
-        app: pingpongapp
-    spec:
-      volumes:
-        - name: secret-volume
-          secret:
-            secretName: db-secrets
-      containers:
-        - name: pingpong
-          imagePullPolicy: Always
-          image: dievskiy/pingpong:v4
-          envFrom:
-            - secretRef:
-                name: db-secrets
-          env:
-            - name: HOST
-              value: postgres-svc
+  containers:
+    - name: pingpong
+      imagePullPolicy: Always
+      image: dievskiy/pingpong:v4
+      envFrom:
+        - secretRef:
+            name: db-secrets
+      env:
+        - name: HOST
+          value: postgres-svc
 ---
 apiVersion: apps/v1
 kind: StatefulSet

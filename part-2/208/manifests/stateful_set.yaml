@@ -23,41 +23,28 @@ metadata:
 spec:
   ports:
     - port: 4444
-      name: pingpong
+      protocol: TCP
+      name: todoapp
   clusterIP: None
   selector:
     app: todoapp
 ---
-apiVersion: apps/v1
-kind: StatefulSet
+apiVersion: v1
+kind: Pod
 metadata:
   name: todoapp
   namespace: my-project
 spec:
-  serviceName: todoapp-svc
-  replicas: 1
-  selector:
-    matchLabels:
-      app: todoapp
-  template:
-    metadata:
-      labels:
-        app: todoapp
-    spec:
-      volumes:
-        - name: secret-volume
-          secret:
-            secretName: db-secrets
-      containers:
-        - name: todo
-          imagePullPolicy: Always
-          image: dievskiy/todoapp:v2
-          envFrom:
-            - secretRef:
-                name: db-secrets
-          env:
-            - name: HOST
-              value: postgres-svc
+  containers:
+    - name: todo
+      imagePullPolicy: Always
+      image: dievskiy/todoapp:v2
+      envFrom:
+        - secretRef:
+            name: db-secrets
+      env:
+        - name: HOST
+          value: postgres-svc
 ---
 apiVersion: apps/v1
 kind: StatefulSet
