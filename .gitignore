@@ -1,3 +1,4 @@
+init-db-new.sql
 .idea
 .DS_Store
 .env*
