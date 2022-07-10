@@ -1,0 +1,8 @@
+apiVersion: v1
+data:
+  .env: |
+    MESSAGE=Hello
+kind: ConfigMap
+metadata:
+  name: app-configs
+  namespace: my-project
