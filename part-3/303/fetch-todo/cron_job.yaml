@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: fetch-read-todo
+  namespace: my-project
+spec:
+  template:
+    spec:
+      containers:
+        - name: fetch-todo
+          image: dievskiy/fetch-todo:v2
+      restartPolicy: Never
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: cron-job-fetch-read-todo
+  namespace: my-project
+spec:
+  schedule: "0 0 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: fetch-todo-cron-job
+              image: dievskiy/fetch-todo:v2
+              imagePullPolicy: Always
+          restartPolicy: OnFailure

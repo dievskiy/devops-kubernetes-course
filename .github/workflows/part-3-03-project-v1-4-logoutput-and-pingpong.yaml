@@ -1,0 +1,57 @@
+name: Deploy log-output and pingpong
+
+on:
+  push:
+    paths:
+      - 'part-3/303/logoutput_pingpong/**'
+      - '.github/workflows/part-3-03-project-v1-4-logoutput-and-pingpong.yaml'
+
+env:
+  PROJECT_ID: ${{ secrets.GKE_PROJECT }}
+  GKE_CLUSTER: dwk-cluster
+  GKE_ZONE: europe-north1-b
+  IMAGE: log-output
+
+jobs:
+  build-publish-deploy:
+    environment: actions-env
+    name: Build, Publish and Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
+        with:
+          project_id: ${{ secrets.GKE_PROJECT }}
+          service_account_key: ${{ secrets.GKE_SA_KEY }}
+          export_default_credentials: true
+
+      - run: gcloud --quiet auth configure-docker
+
+      - run: gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
+
+      - name: Build
+        run: |-
+          cd part-3/303/logoutput_pingpong && docker build \
+            --tag "gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA" \
+            .
+
+      - name: Publish
+        run: |-
+          docker push "gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA"
+
+      - name: Set up Kustomize
+        uses: imranismail/setup-kustomize@v1
+
+      - name: Deploy
+        run: |-
+          cd part-3/303/logoutput_pingpong
+          kubectl config set-context --current --namespace=my-project
+          kustomize edit set namespace my-project
+          kustomize edit set image gcr.io/PROJECT_ID/IMAGE=gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA
+          kustomize build . | kubectl apply -f -
+          kubectl rollout status deployment $IMAGE
+          kubectl get services -o wide
