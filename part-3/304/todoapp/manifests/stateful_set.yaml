@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: todoapp
+spec:
+  serviceName: todoapp-svc
+  replicas: 1
+  selector:
+    matchLabels:
+      app: todoapp
+  template:
+    metadata:
+      labels:
+        app: todoapp
+    spec:
+      volumes:
+        - name: secret-volume
+          secret:
+            secretName: db-secret
+      containers:
+        - name: todo
+          imagePullPolicy: Always
+          image: PROJECT/IMAGE-TODOAPP
+          envFrom:
+            - secretRef:
+                name: db-secret
+          env:
+            - name: HOST
+              value: postgres-svc
+---
