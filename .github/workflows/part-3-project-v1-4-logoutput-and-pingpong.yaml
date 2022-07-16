@@ -3,7 +3,7 @@ name: Deploy log-output and pingpong
 on:
   push:
     paths:
-      - 'part-3/303/logoutput_pingpong/**'
+      - 'part-3/304/logoutput_pingpong/**'
       - '.github/workflows/part-3-03-project-v1-4-logoutput-and-pingpong.yaml'
 
 env:
