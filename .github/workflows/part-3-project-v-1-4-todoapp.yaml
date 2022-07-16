@@ -3,7 +3,7 @@ name: Deploy todoapp
 on:
   push:
     paths:
-      - 'part-3/303/todoapp/**'
+      - 'part-3/304/todoapp/**'
       - '.github/workflows/part-3-03-project-v-1-4-todoapp.yaml'
 
 env:
