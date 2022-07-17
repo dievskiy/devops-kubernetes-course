@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: log-output
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: log-output
+  template:
+    metadata:
+      labels:
+        app: log-output
+    spec:
+      volumes:
+        - name: config
+          configMap:
+            name: app-configs
+            items:
+              - key: .env
+                path: ".env"
+        - name: data-pv
+          persistentVolumeClaim:
+            claimName: data-claim
+      containers:
+        - name: pingpong-image
+          resources:
+            limits:
+              cpu: "200m"
+              memory: "100Mi"
+          imagePullPolicy: Always
+          image: PROJECT/IMAGE-PINGPONG
+          envFrom:
+            - secretRef:
+                name: db-secret
+          env:
+            - name: HOST
+              value: postgres-svc
+        - name: log-output
+          imagePullPolicy: Always
+          image: PROJECT/IMAGE-LOG-OUTPUT
+          resources:
+            limits:
+              cpu: "200m"
+              memory: "100Mi"
+          volumeMounts:
+            - mountPath: "/config"
+              name: config
+              readOnly: true
+            - mountPath: /usr/src/app/files
+              name: data-pv
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: data-claim
+spec:
+  resources:
+    requests:
+      storage: 10Gi
+  accessModes:
+    - ReadWriteOnce

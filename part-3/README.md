@@ -1,0 +1,25 @@
+# Exercise 3.06: DBaaS vs DIY
+
+DBaas solutions are quite different between providers, so this table presents differences mainly based on experience
+with Cloud SQL and Amazon's RDS.
+
+For both providers, persistent volumes and DB services use under the hood compute storage volumes/disks (EBS/CE storage
+disk), so the technology on the first level doesn't differ meaning that performance may change depending on higher
+layers of architecture (doesn't matter if it's changed to NFS/SMB instead of SAN, provider will reuse the technology it
+has).
+
+|                | DBaaS                                                                                                                                                                              | DIY (Kubernetes)                                                                                                                                                                                                                                                                                                                                                                                                                     |
+|----------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Initialization | + By default accepts multiple connections <br/> + Accessible to many clients for writing and reading simultaneously  <br/> <br/> - Harder to initialize than DIY, but still doable | + Only PersistentVolumeClaim resource is needed. <br/>+ Gives greater flexibility: <br/>+ PersistentVolumes exists independently of pods, can be attached to different pods. <br/> + Lots of parameters of volumes  can be changed which is critical for applications with intensive read-write operations (filesystems, volume type, IOs, encryption, ) <br/> <br/> - Not all storage classes can be attached in ReadWriteMany mode |                                                                                                                                                                                                                                                                                                                               |
+| Maintenance    | + e.g serverless-backed DBaaS can autoscale automatically -> lower costs                                                                                                           | + "Autoscaling" is possible with Allow Volume Expansion<br/> + Storage classes can give better developer experience <br/> - volume expansion doesn't allow to shrink volumes <br/> - Might be considered as "Leaky abstraction" for cases when storage is not so important ( but developer still needs to think what storage class to use, what filesystem, disk type etc).                                                          |
+| Backup         | + CloudSQl and RDS provides backup solutions                                                                                                                                       | + Backup of volumes is possible with "Backup for GKE". Surely there are (will be) similar solutions on other platforms. <br/> + GKE provides regional persistent disks                                                                                                                                                                                                                                                               |
+| Vendor lock-in | High-load usage of the service might require usage of additional technologies, like RDS proxy -> changing provider might be difficult                                              | PersistentVolume is an interface to the actual backing storage (as Kubernetes provides a specification, which external or internal provisioners should follow) , so chaning provider should not introduce huge problems.                                                                                                                                                                                                             |
+
+
+# Exercise 3.07: Commitment
+
+I decided to use PersistentVolumes as I wanted to gain more experience with Kubernetes (I've worked with RDS and CloudSQL a bit).
+
+# Exercise 3.10: Project v1.6
+
+For some reason, my app was always logging to stderr, I guess its because of misconfiguration of uwsgi framework I used.
