@@ -18,4 +18,8 @@ has).
 
 # Exercise 3.07: Commitment
 
-I decided to use PersistentVolumes as I wanted to gain more experience with Kubernetes (I've worked with RDS and CloudSQL a bit). 
+I decided to use PersistentVolumes as I wanted to gain more experience with Kubernetes (I've worked with RDS and CloudSQL a bit).
+
+# Exercise 3.10: Project v1.6
+
+For some reason, my app was always logging to stderr, I guess its because of misconfiguration of uwsgi framework I used.

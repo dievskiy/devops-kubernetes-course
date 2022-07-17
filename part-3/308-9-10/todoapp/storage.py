@@ -53,7 +53,7 @@ def save_todo(new_todo: str) -> bool:
         con.commit()
         cur.close()
         con.close()
-        print(f'Saved new todo to the database')
+        print(f'Saved new todo to the database [{new_todo}]')
         return True
     except DBError as err:
         print(f'Error while inserting data{err}')

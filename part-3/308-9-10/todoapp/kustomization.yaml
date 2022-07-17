@@ -6,4 +6,4 @@ resources:
   - manifests/horizontalpodautoscaler.yaml
 images:
   - name: PROJECT/IMAGE-TODOAPP
-    newName: dievskiy/todoapp:v5
+    newName: dievskiy/todoapp:v6
