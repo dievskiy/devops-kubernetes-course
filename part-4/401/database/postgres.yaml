@@ -1,0 +1,65 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-svc
+spec:
+  ports:
+    - port: 6060
+  clusterIP: None
+  selector:
+    app: postgres
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+spec:
+  serviceName: postgres-svc
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      volumes:
+        - name: db
+          persistentVolumeClaim:
+            claimName: db-claim
+      containers:
+        - name: postgres-image
+          imagePullPolicy: Always
+          resources:
+            limits:
+              cpu: "200m"
+              memory: "300Mi"
+          envFrom:
+            - secretRef:
+                name: db-secret
+          env:
+            - name: POSTGRESQL_VOLUME_DIR
+              value: "/postgresql"
+            - name: PGDATA
+              value: "/postgresql/data"
+          image: postgres:14
+          ports:
+            - name: inet
+              containerPort: 6060
+          volumeMounts:
+            - name: db
+              subPath: postgres
+              mountPath: /postgresql
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: db-claim
+spec:
+  resources:
+    requests:
+      storage: 30Gi
+  accessModes:
+    - ReadWriteOnce
+---

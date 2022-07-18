@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pingpong
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pingpong
+  template:
+    metadata:
+      labels:
+        app: pingpong
+    spec:
+      containers:
+        - name: pingpong-image
+          resources:
+            limits:
+              cpu: "200m"
+              memory: "100Mi"
+          imagePullPolicy: Always
+          image: PROJECT/IMAGE-PINGPONG
+          readinessProbe:
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            httpGet:
+              port: 5555
+              path: /healthz
+          envFrom:
+            - secretRef:
+                name: db-secret
+          env:
+            - name: HOST
+              value: postgres-svc
