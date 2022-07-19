@@ -1,0 +1,47 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: pingpong
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: pingpong
+  strategy:
+    canary:
+      steps:
+        - setWeight: 50
+        - analysis:
+            templates:
+              - templateName: restart-rate-pingpong
+  template:
+    metadata:
+      labels:
+        app: pingpong
+    spec:
+      containers:
+        - name: pingpong-image
+          resources:
+            limits:
+              cpu: "200m"
+              memory: "100Mi"
+          imagePullPolicy: Always
+          image: PROJECT/IMAGE-PINGPONG
+          livenessProbe:
+            initialDelaySeconds: 25
+            periodSeconds: 7
+            httpGet:
+              port: 5555
+              path: /healthz
+          readinessProbe:
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            httpGet:
+              port: 5555
+              path: /healthz
+          envFrom:
+            - secretRef:
+                name: db-secret
+          env:
+            - name: HOST
+              value: postgres-svc
