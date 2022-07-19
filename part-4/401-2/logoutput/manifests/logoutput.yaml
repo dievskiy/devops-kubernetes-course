@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: log-output
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: log-output
@@ -26,6 +26,12 @@ spec:
         - name: log-output
           imagePullPolicy: Always
           image: PROJECT/IMAGE-LOG-OUTPUT
+          livenessProbe:
+            initialDelaySeconds: 25
+            periodSeconds: 7
+            httpGet:
+              port: 3333
+              path: /healthz
           readinessProbe:
             initialDelaySeconds: 10
             periodSeconds: 7

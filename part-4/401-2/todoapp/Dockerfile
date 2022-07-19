@@ -20,4 +20,4 @@ EXPOSE 4444
 
 USER python
 
-CMD uwsgi --log-master --master --workers 1 --threads 1 --http 0.0.0.0:${PORT:-4444} --module app:app
+CMD uwsgi --socket-timeout 5 --http-timeout 5 --workers 1 --threads 1 --http 0.0.0.0:${PORT:-4444} --module app:app

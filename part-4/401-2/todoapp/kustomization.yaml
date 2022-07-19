@@ -3,7 +3,7 @@ kind: Kustomization
 resources:
   - manifests/service.yaml
   - manifests/stateful_set.yaml
-  - manifests/horizontalpodautoscaler.yaml
+#  - manifests/horizontalpodautoscaler.yaml # comment out to save some RAM on local setup
 images:
   - name: PROJECT/IMAGE-TODOAPP
-    newName: dievskiy/todoapp:v6
+    newName: dievskiy/todoapp:v7

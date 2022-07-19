@@ -21,6 +21,18 @@ spec:
         - name: todo
           imagePullPolicy: Always
           image: PROJECT/IMAGE-TODOAPP
+          readinessProbe:
+            initialDelaySeconds: 15
+            periodSeconds: 7
+            httpGet:
+              port: 4444
+              path: /healthz
+          livenessProbe:
+            initialDelaySeconds: 25
+            periodSeconds: 7
+            httpGet:
+              port: 4444
+              path: /healthz
           resources:
             limits:
               cpu: "100m"

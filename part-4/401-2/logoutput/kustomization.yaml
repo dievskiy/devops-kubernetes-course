@@ -4,7 +4,7 @@ resources:
   - manifests/logoutput.yaml
   - manifests/configmap.yaml
   - manifests/logoutput_service.yaml
-  - manifests/horizontalpodautoscaler.yaml
+#  - manifests/horizontalpodautoscaler.yaml # comment out to save some RAM on local setup
 images:
   - name: PROJECT/IMAGE-LOG-OUTPUT
     newName: dievskiy/log-output:v19

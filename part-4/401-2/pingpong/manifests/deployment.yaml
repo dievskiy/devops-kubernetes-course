@@ -20,6 +20,12 @@ spec:
               memory: "100Mi"
           imagePullPolicy: Always
           image: PROJECT/IMAGE-PINGPONG
+          livenessProbe:
+            initialDelaySeconds: 25
+            periodSeconds: 7
+            httpGet:
+              port: 5555
+              path: /healthz
           readinessProbe:
             initialDelaySeconds: 10
             periodSeconds: 5

@@ -16,6 +16,14 @@ def _get_db_connection():
     return conn
 
 
+def check_connection() -> bool:
+    try:
+        _get_db_connection()
+        return True
+    except psycopg2.Error:
+        return False
+
+
 def fetch_todos() -> List[Optional[str]] | None:
     try:
         con = _get_db_connection()
