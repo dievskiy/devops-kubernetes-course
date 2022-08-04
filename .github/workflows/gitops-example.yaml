@@ -24,7 +24,7 @@ jobs:
     - name: Build and Push
       uses: docker/build-push-action@v2
       with:
-        context: 4-gitops/app
+        context: part-4/gitops-example/app
         push: true
         tags: dievskiy/dwk-4-gitops-app:${{ github.sha }}
 
