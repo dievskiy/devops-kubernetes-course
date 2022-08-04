@@ -1,0 +1,8 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- deployment.yaml
+images:
+- name: IMAGE_PLACEHOLDER
+  newName: dievskiy/dwk-4-gitops-app
+  newTag: b15411f387bb2a2286676b92a87fd85aa9b682a5
