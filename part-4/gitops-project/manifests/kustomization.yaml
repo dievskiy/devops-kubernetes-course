@@ -14,12 +14,15 @@ images:
 - name: IMAGE_PLACEHOLDER
   newName: dievskiy/todoapp
   newTag: 1440406592cef6200e35336a2959a36f42890113
+- name: PROJECT/IMAGE-BROADCASTER
+  newName: dievskiy/broadcaster
+  newTag: c2af3bdc32fcce37651be57d273dcf4b9f188851
 - name: PROJECT/IMAGE-LOG-OUTPUT
   newName: dievskiy/log-output
-  newTag: 2f88df922cef7a44be81b44ed19a9df6f3bbeedc
+  newTag: c2af3bdc32fcce37651be57d273dcf4b9f188851
 - name: PROJECT/IMAGE-PINGPONG
-  newName: dievskiy/broadcaster
-  newTag: 2f88df922cef7a44be81b44ed19a9df6f3bbeedc
+  newName: dievskiy/pingpong
+  newTag: c2af3bdc32fcce37651be57d273dcf4b9f188851
 - name: PROJECT/IMAGE-TODOAPP
   newName: dievskiy/todoapp
-  newTag: 2f88df922cef7a44be81b44ed19a9df6f3bbeedc
+  newTag: c2af3bdc32fcce37651be57d273dcf4b9f188851
