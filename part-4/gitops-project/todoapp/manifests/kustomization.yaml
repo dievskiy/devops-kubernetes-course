@@ -7,6 +7,6 @@ resources:
 images:
 - name: IMAGE_PLACEHOLDER
   newName: dievskiy/todoapp
-  newTag: f9ae32a28536577c003c0cfe1183d0a528560c04
+  newTag: 1440406592cef6200e35336a2959a36f42890113
 - name: PROJECT/IMAGE-TODOAPP
   newName: dievskiy/todoapp:v10
