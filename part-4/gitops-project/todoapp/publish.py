@@ -4,6 +4,9 @@ import nats
 
 URL = os.getenv('NATS_URL')
 if not URL:
+    """
+    Fail if env is not provided
+    """
     raise ValueError("NATS_URL was not specified")
 
 
