@@ -7,3 +7,4 @@ tmp
 venv
 key.txt
 secret.yaml
+.sops.asc
