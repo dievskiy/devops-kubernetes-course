@@ -1,0 +1,13 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta1
+kind: Kustomization
+metadata:
+  name: gitops-app
+  namespace: flux-system
+spec:
+  sourceRef:
+    kind: GitRepository
+    name: repo-project
+  interval: 2m
+  path: ./part-4/gitops-project/manifests # Path tells where to find the files. Excellent for "monorepos" where you have multiple different applications in one repository, like the example repository.
+  prune: true # This will make sure that deleting the file will delete the resource
+  validation: client # Who validates the objects. Server or the client.

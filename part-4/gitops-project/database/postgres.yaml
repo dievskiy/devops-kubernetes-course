@@ -1,0 +1,115 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-svc
+spec:
+  ports:
+    - port: 6060
+  clusterIP: None
+  selector:
+    app: postgres
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+spec:
+  serviceName: postgres-svc
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      volumes:
+        - name: config
+          configMap:
+            name: db-init-configmap
+            items:
+              - key: data.sql
+                path: "data-init.sql"
+        - name: db
+          persistentVolumeClaim:
+            claimName: db-claim
+      containers:
+        - name: postgres-image
+          imagePullPolicy: Always
+          resources:
+            limits:
+              cpu: "200m"
+              memory: "300Mi"
+          envFrom:
+            - secretRef:
+                name: db-secret
+          env:
+            - name: POSTGRESQL_VOLUME_DIR
+              value: "/postgresql"
+            - name: PGDATA
+              value: "/postgresql/data"
+          image: postgres:14
+          ports:
+            - name: inet
+              containerPort: 6060
+          volumeMounts:
+            - name: config
+              mountPath: "/docker-entrypoint-initdb.d"
+            - name: db
+              subPath: postgres
+              mountPath: /postgresql
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: db-claim
+spec:
+  resources:
+    requests:
+      storage: 200Mi
+  accessModes:
+    - ReadWriteOnce
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: db-init-configmap
+data:
+  data.sql:
+    ---
+    DROP SCHEMA IF EXISTS "data" CASCADE;
+    CREATE SCHEMA "data" AUTHORIZATION "postgres";
+    SET search_path TO "data";
+    START TRANSACTION;
+    SET standard_conforming_strings=off;
+    SET escape_string_warning=off;
+    SET CONSTRAINTS ALL DEFERRED;
+    
+    CREATE TABLE pongs
+    (
+        id     BIGSERIAL NOT NULL,
+        number INT       NOT NULL,
+        PRIMARY KEY (id)
+    );
+    INSERT INTO pongs (number)
+    values (0);
+    
+    CREATE TABLE todos
+    (
+        id   BIGSERIAL             NOT NULL,
+        name VARCHAR(140)          NOT NULL,
+        done BOOLEAN               NOT NULL,
+        PRIMARY KEY (id)
+    );
+    
+    -- Owner-Alter-Table --
+    ALTER TABLE "pongs" OWNER TO "postgres";
+    ALTER TABLE "todos" OWNER TO "postgres";
+    -- Post-data save --
+    COMMIT;
+    START TRANSACTION;
+    -- Sequences --
+    -- Full Text keys --
+    COMMIT;
+    ---

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Devops</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <style type="text/css">
+        .container {
+            max-width: 500px;
+            padding-top: 100px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <p>{{ current_time }}: {{ random_string }}</p>
+    <p>Ping / Pongs: {{ pongs }}</p>
+    <img src="data:;base64,{{ image_data }}" alt="">
+    <form role="form" class="form-group" method="post" action="{{ url_for('form_add_item') }}">
+        <label for="item">Item: </label>
+        <input type="text" id="item" name="item" maxlength="140">
+        <input type="submit" value="Create">
+    </form>
+    <p class="container">
+        {{ message }}
+    </p>
+    {% for todo in todos %}
+        <li class="list-group-item">
+            <form role="form" method="post" action="{{ url_for('form_toggle_todo', todo_id=todo['id']) }}">
+                <p class="done">Todo: {{ todo['name'] }}</p>
+                {% if todo['is_done'] == true %}
+                    <div class="small"> This todo is done</div>
+                {% else %}
+                    <div class="small red">This todo is not done</div>
+                    <input type="submit" value="Mark as done">
+                {% endif %}
+            </form>
+        </li>
+    {% endfor %}
+</div>
+<script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+</body>
+</html>

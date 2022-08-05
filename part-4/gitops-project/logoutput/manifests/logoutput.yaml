@@ -1,0 +1,70 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: log-output
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: log-output
+  strategy:
+    canary:
+      steps:
+        - setWeight: 50
+        - analysis:
+            templates:
+              - templateName: restart-rate-log-output
+  template:
+    metadata:
+      labels:
+        app: log-output
+    spec:
+      volumes:
+        - name: config
+          configMap:
+            name: app-configs
+            items:
+              - key: .env
+                path: ".env"
+        - name: data-pv
+          persistentVolumeClaim:
+            claimName: data-claim
+      containers:
+        - name: log-output
+          imagePullPolicy: Always
+          image: PROJECT/IMAGE-LOG-OUTPUT
+          livenessProbe:
+            timeoutSeconds: 10
+            initialDelaySeconds: 150
+            periodSeconds: 7
+            httpGet:
+              port: 3333
+              path: /healthz
+          readinessProbe:
+            timeoutSeconds: 10
+            initialDelaySeconds: 150
+            periodSeconds: 7
+            httpGet:
+              port: 3333
+              path: /healthz
+          resources:
+            limits:
+              cpu: "200m"
+              memory: "300Mi"
+          volumeMounts:
+            - mountPath: "/config"
+              name: config
+              readOnly: true
+            - mountPath: /usr/src/app/files
+              name: data-pv
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: data-claim
+spec:
+  resources:
+    requests:
+      storage: 200Mi
+  accessModes:
+    - ReadWriteOnce

@@ -1,0 +1,10 @@
+apiVersion: source.toolkit.fluxcd.io/v1beta1
+kind: GitRepository
+metadata:
+  name: repo-project
+  namespace: flux-system
+spec:
+  interval: 2m
+  url: https://github.com/dievskiy/devops-kubernetes-course
+  ref:
+    branch: main
