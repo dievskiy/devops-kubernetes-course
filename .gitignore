@@ -8,3 +8,4 @@ venv
 key.txt
 secret.yaml
 .sops.asc
+tg-secret.yaml

@@ -6,8 +6,6 @@ WORKDIR /usr/src/app
 
 COPY requirements.txt ./
 
-RUN pip install --no-cache-dir -r requirements.txt
-
 COPY . .
 
 RUN apt-get update && \
@@ -15,6 +13,8 @@ RUN apt-get update && \
 
 RUN useradd -rm -d /home/python -s /bin/bash -g root -G sudo -u 1001 python && \
      echo "python:python" | chpasswd
+
+RUN pip install --no-cache-dir -r requirements.txt
 
 USER python
 

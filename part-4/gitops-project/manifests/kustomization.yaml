@@ -1,8 +1,15 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- service.yaml
-- stateful_set.yaml
+- todoapp-service.yaml
+- todoapp-stateful_set.yaml
+- pingpong-analysistemplate.yaml
+- pingpong_service.yaml
+- pingpong-deployment.yaml
+- logoutput-analysistemplate.yaml
+- logoutput-configmap.yaml
+- logoutput-deployment.yaml
+- broadcaster-deployment.yaml
 #  - horizontalpodautoscaler.yaml # comment out to save some RAM on local setup
 images:
 - name: IMAGE_PLACEHOLDER

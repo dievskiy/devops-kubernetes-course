@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: broadcaster
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: broadcaster
+  template:
+    metadata:
+      labels:
+        app: broadcaster
+    spec:
+      containers:
+        - name: broadcaster
+          image: dievskiy/broadcaster:v1
+          imagePullPolicy: Always
+          envFrom:
+            - secretRef:
+                name: tg-secret
+          env:
+            - name: CHAT_ID
+              value: "-1001720031083"
+            - name: NATS_URL
+              value: nats://my-nats:4222
