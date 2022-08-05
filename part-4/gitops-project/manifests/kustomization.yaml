@@ -10,10 +10,16 @@ resources:
 - logoutput-configmap.yaml
 - logoutput-deployment.yaml
 - broadcaster-deployment.yaml
-#  - horizontalpodautoscaler.yaml # comment out to save some RAM on local setup
 images:
 - name: IMAGE_PLACEHOLDER
   newName: dievskiy/todoapp
   newTag: 1440406592cef6200e35336a2959a36f42890113
+- name: PROJECT/IMAGE-LOG-OUTPUT
+  newName: dievskiy/log-output
+  newTag: 2f88df922cef7a44be81b44ed19a9df6f3bbeedc
+- name: PROJECT/IMAGE-PINGPONG
+  newName: dievskiy/broadcaster
+  newTag: 2f88df922cef7a44be81b44ed19a9df6f3bbeedc
 - name: PROJECT/IMAGE-TODOAPP
-  newName: dievskiy/todoapp:v10
+  newName: dievskiy/todoapp
+  newTag: 2f88df922cef7a44be81b44ed19a9df6f3bbeedc

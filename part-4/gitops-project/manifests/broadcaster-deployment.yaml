@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: broadcaster
-          image: dievskiy/broadcaster:v1
+          image: PROJECT/IMAGE-BROADCASTER
           imagePullPolicy: Always
           envFrom:
             - secretRef:

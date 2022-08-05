@@ -69,7 +69,7 @@ jobs:
           kustomize edit set image PROJECT/IMAGE-TODOAPP=dievskiy/todoapp:${{ github.sha }}
           kustomize edit set image PROJECT/IMAGE-LOG-OUTPUT=dievskiy/log-output:${{ github.sha }}
           kustomize edit set image PROJECT/IMAGE-PINGPONG=dievskiy/pingpong:${{ github.sha }}
-          kustomize edit set image PROJECT/IMAGE-PINGPONG=dievskiy/broadcaster:${{ github.sha }}
+          kustomize edit set image PROJECT/IMAGE-BROADCASTER=dievskiy/broadcaster:${{ github.sha }}
 
       # Commit and push
       - uses: EndBug/add-and-commit@v7
