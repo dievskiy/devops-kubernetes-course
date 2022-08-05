@@ -36,7 +36,7 @@ async def toggle_todo(id):
         await publish_todo(f'Todo with id {id}', 'done')
         return jsonify({}), 204
     else:
-        return jsonify({'message': f'Failed to set todo "{id} as {is_done}"'}), 400
+        return jsonify({'message': f'Error: Failed to set todo "{id} as {is_done}"'}), 400
 
 
 @app.route('/todos', methods=['GET'])
