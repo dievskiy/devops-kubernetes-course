@@ -6,12 +6,15 @@ WORKDIR /usr/src/app
 
 COPY requirements.txt ./
 
-RUN pip install --no-cache-dir -r requirements.txt
-
 COPY . .
 
 RUN apt-get update && \
-      apt-get -y install sudo
+    apt-get install -y python3-pip && \
+    apt install gcc && \
+    pip3 install uwsgi && \
+    apt-get -y install sudo
+
+RUN pip install -r requirements.txt
 
 RUN useradd -rm -d /home/python -s /bin/bash -g root -G sudo -u 1001 python && \
      echo "python:python" | chpasswd
