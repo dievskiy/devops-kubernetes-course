@@ -1,4 +1,4 @@
-FROM python:3.10
+FROM python:3.11
 
 LABEL maintainer="Ruslan Potekhin <potekhin.ruslan@gmail.com>"
 
@@ -10,6 +10,7 @@ COPY . .
 
 RUN apt-get update && \
     apt-get install -y python3-pip && \
+    apt-get install build-essential python3-dev && \
     apt install gcc && \
     pip3 install uwsgi && \
     apt-get -y install sudo

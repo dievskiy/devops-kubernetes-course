@@ -20,7 +20,7 @@ spec:
       containers:
         - name: todo
           imagePullPolicy: Always
-          image: PROJECT/IMAGE-TODOAPP
+          image: IMAGE_PLACEHOLDER
           readinessProbe:
             timeoutSeconds: 10
             failureThreshold: 4
