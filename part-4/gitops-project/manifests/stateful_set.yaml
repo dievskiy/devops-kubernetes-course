@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: todoapp
+spec:
+  serviceName: todoapp-svc
+  replicas: 1
+  selector:
+    matchLabels:
+      app: todoapp
+  template:
+    metadata:
+      labels:
+        app: todoapp
+    spec:
+      volumes:
+        - name: secret-volume
+          secret:
+            secretName: db-secret
+      containers:
+        - name: todo
+          imagePullPolicy: Always
+          image: IMAGE_PLACEHOLDER
+          readinessProbe:
+            timeoutSeconds: 10
+            failureThreshold: 4
+            initialDelaySeconds: 150
+            periodSeconds: 7
+            httpGet:
+              port: 4444
+              path: /healthz
+          livenessProbe:
+            timeoutSeconds: 10
+            failureThreshold: 4
+            initialDelaySeconds: 150
+            periodSeconds: 7
+            httpGet:
+              port: 4444
+              path: /healthz
+          resources:
+            limits:
+              cpu: "100m"
+              memory: "150Mi"
+          envFrom:
+            - secretRef:
+                name: db-secret
+          env:
+            - name: NATS_URL
+              value: nats://my-nats:4222
+            - name: HOST
+              value: postgres-svc
+---
