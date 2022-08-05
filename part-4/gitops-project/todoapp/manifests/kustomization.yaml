@@ -1,9 +1,12 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - service.yaml
-  - stateful_set.yaml
+- service.yaml
+- stateful_set.yaml
 #  - horizontalpodautoscaler.yaml # comment out to save some RAM on local setup
 images:
-  - name: PROJECT/IMAGE-TODOAPP
-    newName: dievskiy/todoapp:v10
+- name: IMAGE_PLACEHOLDER
+  newName: dievskiy/todoapp
+  newTag: b8e4a24f8671ec4469c1be2103def31dfcaedf0f
+- name: PROJECT/IMAGE-TODOAPP
+  newName: dievskiy/todoapp:v10
