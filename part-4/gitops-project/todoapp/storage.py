@@ -3,7 +3,7 @@ from __future__ import annotations
 import psycopg2
 import os
 from psycopg2 import Error as DBError
-from typing import List, Optional, Any, Set, Dict
+import typing
 
 HOST = os.getenv('HOST', 'localhost')
 
@@ -38,7 +38,7 @@ def toggle(todo_id: int, is_done: bool) -> bool:
         return False
 
 
-def fetch_todos() -> List[Dict[str, bool]] | None:
+def fetch_todos() -> typing.List[typing.Dict[str, bool]] | None:
     try:
         con = _get_db_connection()
         cur = con.cursor()

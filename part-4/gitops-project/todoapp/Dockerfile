@@ -1,4 +1,4 @@
-FROM python:3.11
+FROM python:3.9
 
 LABEL maintainer="Ruslan Potekhin <potekhin.ruslan@gmail.com>"
 
