@@ -1,0 +1,118 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-svc
+spec:
+  clusterIP: None
+  ports:
+    - port: 6060
+  selector:
+    app: postgres
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  serviceName: postgres-svc
+  template:
+    metadata:
+      annotations:
+        linkerd.io/inject: enabled
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - env:
+            - name: POSTGRESQL_VOLUME_DIR
+              value: /postgresql
+            - name: PGDATA
+              value: /postgresql/data
+          envFrom:
+            - secretRef:
+                name: db-secret
+          image: postgres:14
+          imagePullPolicy: Always
+          name: postgres-image
+          ports:
+            - containerPort: 6060
+              name: inet
+          resources:
+            limits:
+              cpu: 200m
+              memory: 300Mi
+          volumeMounts:
+            - mountPath: /docker-entrypoint-initdb.d
+              name: config
+            - mountPath: /postgresql
+              name: db
+              subPath: postgres
+      volumes:
+        - configMap:
+            items:
+              - key: data.sql
+                path: data-init.sql
+            name: db-init-configmap
+          name: config
+        - name: db
+          persistentVolumeClaim:
+            claimName: db-claim
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: db-claim
+spec:
+  resources:
+    requests:
+      storage: 200Mi
+  accessModes:
+    - ReadWriteOnce
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: db-init-configmap
+data:
+  data.sql:
+    ---
+    DROP SCHEMA IF EXISTS "data" CASCADE;
+    CREATE SCHEMA "data" AUTHORIZATION "postgres";
+    SET search_path TO "data";
+    START TRANSACTION;
+    SET standard_conforming_strings=off;
+    SET escape_string_warning=off;
+    SET CONSTRAINTS ALL DEFERRED;
+    
+    CREATE TABLE pongs
+    (
+        id     BIGSERIAL NOT NULL,
+        number INT       NOT NULL,
+        PRIMARY KEY (id)
+    );
+    INSERT INTO pongs (number)
+    values (0);
+    
+    CREATE TABLE todos
+    (
+        id   BIGSERIAL             NOT NULL,
+        name VARCHAR(140)          NOT NULL,
+        done BOOLEAN               NOT NULL,
+        PRIMARY KEY (id)
+    );
+    
+    -- Owner-Alter-Table --
+    ALTER TABLE "pongs" OWNER TO "postgres";
+    ALTER TABLE "todos" OWNER TO "postgres";
+    -- Post-data save --
+    COMMIT;
+    START TRANSACTION;
+    -- Sequences --
+    -- Full Text keys --
+    COMMIT;
+    ---
+---

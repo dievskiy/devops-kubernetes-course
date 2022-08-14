@@ -1,0 +1,14 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: restart-rate-pingpong
+spec:
+  metrics:
+    - name: restart-rate
+      initialDelay: 10m
+      successCondition: result < 0.15
+      provider:
+        prometheus:
+          address: http://kube-prometheus-stack-1658-prometheus.prometheus.svc.cluster.local:9090
+          query: |
+            scalar(sum (rate (container_cpu_usage_seconds_total{namespace="default"}[10m])))

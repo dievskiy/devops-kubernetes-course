@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: todoapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: todoapp
+  serviceName: todoapp-svc
+  template:
+    metadata:
+      annotations:
+        linkerd.io/inject: enabled
+      labels:
+        app: todoapp
+    spec:
+      containers:
+        - env:
+            - name: NATS_URL
+              value: nats://my-nats:4222
+            - name: HOST
+              value: postgres-svc
+          envFrom:
+            - secretRef:
+                name: db-secret
+          image: PROJECT/IMAGE-TODOAPP
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 4
+            httpGet:
+              path: /healthz
+              port: 4444
+            initialDelaySeconds: 150
+            periodSeconds: 7
+            timeoutSeconds: 10
+          name: todo
+          readinessProbe:
+            failureThreshold: 4
+            httpGet:
+              path: /healthz
+              port: 4444
+            initialDelaySeconds: 150
+            periodSeconds: 7
+            timeoutSeconds: 10
+          resources:
+            limits:
+              cpu: 100m
+              memory: 150Mi
+      volumes:
+        - name: secret-volume
+          secret:
+            secretName: db-secret
+---

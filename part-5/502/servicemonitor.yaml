@@ -1,0 +1,20 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: monitoring-nats
+  namespace: prometheus
+  labels:
+    release: kube-prometheus-stack-1658249389
+  # We need a label so that Prometheus knows to listen to this
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: nats
+    # We also need a label which we want to listen
+  endpoints:
+    - interval: 10s
+      path: /metrics
+      port: metrics # We need to define the port which should be listened
+  namespaceSelector:
+    matchNames:
+      - default

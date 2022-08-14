@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: todoapp-svc
+spec:
+  type: NodePort
+  ports:
+    - port: 4444
+      name: todoapp
+  selector:
+    app: todoapp
+---

@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: broadcaster
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: broadcaster
+  template:
+    metadata:
+      annotations:
+        linkerd.io/inject: enabled
+      labels:
+        app: broadcaster
+    spec:
+      containers:
+        - env:
+            - name: CHAT_ID
+              value: "-1001720031083"
+            - name: NATS_URL
+              value: nats://my-nats:4222
+          envFrom:
+            - secretRef:
+                name: tg-secret
+          image: dievskiy/broadcaster:v1
+          imagePullPolicy: Always
+          name: broadcaster
+---
