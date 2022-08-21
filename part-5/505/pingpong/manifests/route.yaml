@@ -1,0 +1,8 @@
+apiVersion: serving.knative.dev/v1
+kind: Route
+metadata:
+  name: pingpong-route
+spec:
+  traffic:
+    - revisionName: pingpong-v1
+      percent: 100
